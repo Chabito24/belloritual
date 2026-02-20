@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+:root {
+  /* Brand */
+  --bg: 251 248 243;        /* #FBF8F3 */
+  --surface: 255 255 255;   /* #FFFFFF */
+  --cream: 243 237 228;     /* #F3EDE4 */
+  --border: 232 222 210;    /* #E8DED2 */
+
+  --gold: 201 163 91;       /* #C9A35B */
+  --gold-soft: 231 210 166; /* #E7D2A6 */
+  --blush: 233 185 192;     /* #E9B9C0 */
+  --rose: 215 124 136;      /* #D77C88 */
+
+  --text: 43 31 30;         /* #2B1F1E */
+  --muted: 106 90 87;       /* #6A5A57 */
+
+  /* Radius */
+  --r-card: 16px;
+  --r-input: 14px;
+}
+
+html, body {
+  height: 100%;
+}
+
+body {
+  font-family: var(--font-sans), system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  background: rgb(var(--bg));
+  color: rgb(var(--text));
+}
+
+/* Tipografía */
+.h-title {
+  font-family: var(--font-serif), Georgia, "Times New Roman", serif;
+  letter-spacing: -0.02em;
+}
+
+/* Componentes (clases utilitarias reusables) */
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  .card {
+    border-radius: var(--r-card);
+    @apply bg-white/90 backdrop-blur border;
+    border-color: rgb(var(--border));
+    box-shadow: 0 10px 30px rgba(43,31,30,0.06);
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 font-medium transition;
+    @apply px-5 py-3 rounded-xl;
+    background: rgb(var(--gold));
+    color: white;
+  }
+  .btn-primary:hover { background: rgb(var(--gold-soft)); color: rgb(var(--text)); }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 font-medium transition;
+    @apply px-5 py-3 rounded-xl border bg-white/60;
+    border-color: rgb(var(--border));
+    color: rgb(var(--text));
+  }
+
+  .chip {
+    @apply inline-flex items-center rounded-full px-4 py-2 text-sm border bg-white/60;
+    border-color: rgb(var(--border));
+  }
+
+  .input {
+    @apply w-full rounded-xl px-4 py-3 bg-white/70 border outline-none;
+    border-color: rgb(var(--border));
+  }
+  .input:focus {
+    border-color: rgb(var(--gold));
+    box-shadow: 0 0 0 4px rgba(201,163,91,0.18);
+  }
+}
