@@ -141,12 +141,13 @@ export default function MobileMenu() {
                 </div>
               </details> */}
 
-            <Link href="/reservar" className="hover:text-[#B68A3A]">
-                Reserva
-            
-            </Link>
-
-              
+              <Link 
+              href="/reservar" 
+              className="block rounded-xl px-3 py-3 hover:bg-[#FBF7F2]"
+              onClick={() => setOpen(false)}
+              >
+                  Reserva              
+              </Link>
 
               <Link
                 href="/contacto"
