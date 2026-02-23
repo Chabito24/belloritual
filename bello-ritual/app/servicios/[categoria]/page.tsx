@@ -1,5 +1,6 @@
 // app/servicios/[categoria]/page.tsx
 import Link from "next/link";
+import { buildWhatsAppUrl, serviceWhatsAppMessage } from "@/lib/whatsapp";
 import { notFound } from "next/navigation";
 import CategoryTabs from "@/components/CategoryTabs";
 import ServiceCard from "@/components/ServiceCard";
@@ -91,7 +92,9 @@ export default async function CategoriaPage({
                 durationMin={s.durationMin}
                 priceFrom={s.priceFrom}
                 priceTo={s.priceTo}
+                benefit={s.benefit}
                 bullets={s.bullets}
+                whatsappHref={buildWhatsAppUrl(serviceWhatsAppMessage(s.title))}
               />
             ))
           )}

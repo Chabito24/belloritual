@@ -21,6 +21,7 @@ export type ServiceItem = {
   durationMin?: number;
   priceFrom: number;
   priceTo: number;
+  benefit?: string;
   bullets?: string[];
 };
 
@@ -70,7 +71,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Lifting de pestañas",
     durationMin: 60,
     priceFrom: 140000,
-    priceTo: 170000,
+    priceTo: 140000,
+    benefit: "Realza la curvatura natural de tus pestañas.",
   },
   {
     id: "lifting-plus",
@@ -79,7 +81,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Lifting + tinte + botox",
     durationMin: 75,
     priceFrom: 160000,
-    priceTo: 185000,
+    priceTo: 160000,
+    benefit: "Curvatura, color e hidratación en un solo servicio.",
   },
   {
     id: "ext-clasicas",
@@ -88,7 +91,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Extensiones clásicas (pelo a pelo)",
     durationMin: 90,
     priceFrom: 170000,
-    priceTo: 200000,
+    priceTo: 170000,
+    benefit: "Mirada definida con acabado natural y elegante.",
   },
   {
     id: "volumen-2d3d",
@@ -97,7 +101,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Volumen 2D/3D",
     durationMin: 120,
     priceFrom: 250000,
-    priceTo: 310000,
+    priceTo: 250000,
+    benefit: "Mayor densidad y efecto de mirada más intensa.",
   },
   {
     id: "mant-clasico",
@@ -106,7 +111,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Mantenimiento clásico",
     durationMin: 60,
     priceFrom: 80000,
-    priceTo: 110000,
+    priceTo: 80000,
+    benefit: "Mantén tus extensiones limpias y con buena forma.",
   },
   {
     id: "mant-volumen",
@@ -115,7 +121,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Mantenimiento volumen",
     durationMin: 75,
     priceFrom: 145000,
-    priceTo: 190000,
+    priceTo: 145000,
+    benefit: "Recupera densidad y uniformidad en tu volumen.",
   },
   {
     id: "retiro-pestanas",
@@ -124,7 +131,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Retiro de pestañas",
     durationMin: 30,
     priceFrom: 30000,
-    priceTo: 45000,
+    priceTo: 30000,
+    benefit: "Retiro cuidadoso para proteger tu pestaña natural.",
   },
 
   // UÑAS
@@ -135,7 +143,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Manicure tradicional",
     durationMin: 45,
     priceFrom: 30000,
-    priceTo: 35000,
+    priceTo: 30000,
+    benefit: "Manos limpias y uñas con acabado prolijo.",
   },
   {
     id: "semi-1tono",
@@ -144,7 +153,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Semipermanente (1 tono)",
     durationMin: 60,
     priceFrom: 55000,
-    priceTo: 60000,
+    priceTo: 55000,
+    benefit: "Color duradero con brillo y excelente presentación.",
   },
   {
     id: "capping-gel",
@@ -153,7 +163,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Capping gel (refuerzo)",
     durationMin: 75,
     priceFrom: 75000,
-    priceTo: 90000,
+    priceTo: 75000,
+    benefit: "Refuerza la uña natural para mayor resistencia.",
   },
   {
     id: "soft-gel",
@@ -162,7 +173,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Soft gel tips",
     durationMin: 90,
     priceFrom: 120000,
-    priceTo: 150000,
+    priceTo: 120000,
+    benefit: "Extensión ligera con acabado moderno y limpio.",
   },
   {
     id: "acrilicas-semi",
@@ -171,7 +183,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Acrílicas + semipermanente",
     durationMin: 120,
     priceFrom: 140000,
-    priceTo: 170000,
+    priceTo: 140000,
+    benefit: "Longitud, forma y color con acabado profesional.",
   },
   {
     id: "retoque-acrilicas",
@@ -180,7 +193,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Retoque acrílicas",
     durationMin: 90,
     priceFrom: 110000,
-    priceTo: 140000,
+    priceTo: 110000,
+    benefit: "Mantén tus acrílicas uniformes y bien presentadas.",
   },
   {
     id: "pedicure-trad",
@@ -189,7 +203,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Pedicure tradicional",
     durationMin: 60,
     priceFrom: 35000,
-    priceTo: 45000,
+    priceTo: 35000,
+    benefit: "Cuidado básico para pies limpios y descansados.",
   },
   {
     id: "pedicure-semi",
@@ -198,7 +213,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Pedicure semipermanente",
     durationMin: 75,
     priceFrom: 48000,
-    priceTo: 65000,
+    priceTo: 48000,
+    benefit: "Color duradero y acabado impecable en pies.",
   },
   {
     id: "pedicure-spa",
@@ -207,7 +223,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Pedicure spa (exfoliación + hidratación)",
     durationMin: 80,
     priceFrom: 45000,
-    priceTo: 60000,
+    priceTo: 45000,
+    benefit: "Suaviza e hidrata tus pies con cuidado extra.",
   },
 
   // DEPILACIÓN
@@ -218,7 +235,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Cejas (cera)",
     durationMin: 15,
     priceFrom: 18000,
-    priceTo: 28000,
+    priceTo: 18000,
+    benefit: "Define tu mirada con diseño limpio de cejas.",
   },
   {
     id: "bigote",
@@ -227,7 +245,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Bigote / bozo",
     durationMin: 10,
     priceFrom: 12000,
-    priceTo: 18000,
+    priceTo: 12000,
+    benefit: "Retiro rápido y cuidado para una piel más limpia.",
   },
   {
     id: "axilas",
@@ -236,7 +255,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Axilas",
     durationMin: 15,
     priceFrom: 16000,
-    priceTo: 20000,
+    priceTo: 16000,
+    benefit: "Depilación práctica con acabado limpio y cómodo.",
   },
   {
     id: "bikini-linea",
@@ -245,7 +265,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Bikini línea",
     durationMin: 25,
     priceFrom: 40000,
-    priceTo: 55000,
+    priceTo: 40000,
+    benefit: "Perfilado cuidadoso para mayor comodidad y seguridad.",
   },
   {
     id: "bikini-completo",
@@ -254,7 +275,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Bikini completo",
     durationMin: 35,
     priceFrom: 50000,
-    priceTo: 65000,
+    priceTo: 50000,
+    benefit: "Resultado limpio con atención cuidadosa en cada zona.",
   },
   {
     id: "media-pierna",
@@ -263,7 +285,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Media pierna",
     durationMin: 30,
     priceFrom: 31000,
-    priceTo: 50000,
+    priceTo: 31000,
+    benefit: "Piel más suave con depilación uniforme.",
   },
   {
     id: "pierna-completa",
@@ -272,7 +295,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Pierna completa",
     durationMin: 45,
     priceFrom: 58000,
-    priceTo: 80000,
+    priceTo: 58000,
+    benefit: "Cobertura completa con acabado limpio y uniforme.",
   },
   {
     id: "paquete-5zonas",
@@ -281,7 +305,8 @@ export const SERVICES: ServiceItem[] = [
     title: "Paquete (5 zonas)",
     durationMin: 60,
     priceFrom: 110000,
-    priceTo: 140000,
+    priceTo: 110000,
+    benefit: "Ahorra tiempo resolviendo varias zonas en una cita.",
   },
 ];
 
