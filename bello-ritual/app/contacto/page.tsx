@@ -2,6 +2,8 @@ import Link from "next/link";
 import ContactClient from "./ContactClient";
 
 const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
+// const GOOGLE_FORM_URL =
+//   "https://docs.google.com/forms/d/e/1FAIpQLScaaL-vGVjm1Fv6io3RF3L0iZ9h3EYQSYusfEqB__f4h_weAA/viewform?usp=header"; sprint futuro
 
 export default function ContactoPage() {
   return (
@@ -10,23 +12,58 @@ export default function ContactoPage() {
       <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-10 text-center shadow-sm">
         <h1 className="text-4xl font-semibold">Contáctanos</h1>
         <p className="mt-3 text-sm text-[#5B463D]">
-          Cuéntanos qué necesitas y te responderemos pronto.
+          Si tienes dudas o quieres más información, escríbenos y te responderemos pronto.
         </p>
 
-        <Link
-          href="#form"
-          className="mt-6 inline-flex rounded-full bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white hover:opacity-90"
-        >
-          Reservar cita
-        </Link>
+        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link
+            href="#form"
+            className="inline-flex rounded-full bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white hover:opacity-90"
+          >
+            Enviar consulta
+          </Link>
+
+          <Link
+            href="/reservar"
+            className="inline-flex rounded-full border border-[#E9D9C9] bg-white/70 px-6 py-3 text-sm font-medium text-[#2B1B14] hover:border-[#B68A3A]"
+          >
+            Ir a reservas
+          </Link>
+        </div>
       </div>
 
-      {/* Form */}
+      {/* Formulario de contacto / lead */}
       <ContactClient />
+
+      {/* Formulario de seguimiento (Google Form -> Sheets) */}
+{/* <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 shadow-sm">
+  <h2 className="text-xl font-semibold text-[#2B1B14]">
+    ¿Prefieres que te contactemos después?
+  </h2>
+
+  <p className="mt-2 text-sm text-[#5B463D]">
+    Déjanos tus datos en nuestro formulario y te escribimos por WhatsApp.
+  </p>
+
+  <a
+    href={GOOGLE_FORM_URL}
+    target="_blank"
+    rel="noreferrer"
+    className="mt-4 inline-flex rounded-full border border-[#E9D9C9] bg-white/70 px-6 py-3 text-sm font-medium text-[#2B1B14] hover:border-[#B68A3A]"
+  >
+    Dejar datos
+  </a>
+
+  <p className="mt-3 text-xs text-[#6A5A57]">
+    Se abrirá el formulario en una nueva pestaña.
+  </p> sprint futuro
+</div> */}
 
       {/* WhatsApp directo */}
       <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 text-center shadow-sm">
-        <p className="text-sm text-[#5B463D]">¿Prefieres escribirnos por WhatsApp?</p>
+        <p className="text-sm text-[#5B463D]">
+          ¿Prefieres escribirnos directamente por WhatsApp?
+        </p>
         <a
           className="mt-3 inline-flex rounded-full border border-[#E9D9C9] bg-white/70 px-6 py-3 text-sm font-medium hover:border-[#B68A3A]"
           href={`https://wa.me/${WHATSAPP_NUMBER}`}
@@ -35,6 +72,10 @@ export default function ContactoPage() {
         >
           Abrir WhatsApp
         </a>
+
+        <p className="mt-3 text-xs text-[#6A5A57]">
+          Si ya deseas agendar, también puedes ir directamente a la página de reservas.
+        </p>
       </div>
     </section>
   );

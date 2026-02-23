@@ -23,14 +23,14 @@ export default function HomeHero() {
             href="/reservar"
             className="inline-flex items-center justify-center rounded-xl bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white transition hover:opacity-90"
           >
-            Reservar cita →
+            Reservar
           </Link>
 
           <Link
             href="/servicios"
             className="inline-flex items-center justify-center rounded-xl border border-[#E9D9C9] bg-white/70 px-6 py-3 text-sm font-medium text-[#2B1B14] transition hover:bg-white"
           >
-            Ver servicios
+            Servicios
           </Link>
         </div>
       </div>

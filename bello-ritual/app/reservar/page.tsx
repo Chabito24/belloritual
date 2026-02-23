@@ -17,6 +17,23 @@ export default function ReservarPage() {
       </p>
 
       <CalendlyEmbed url={url} height={700} />
+
+      {/* Política de reserva */}
+      <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 shadow-sm">
+        <h2 className="text-xl font-semibold text-[#2B1B14]">Política de reserva</h2>
+
+        <ul className="mt-3 space-y-2 text-sm text-[#5B463D]">
+          <li>• Las citas se agendan según disponibilidad confirmada.</li>
+          <li>• Si necesitas cancelar o reprogramar, avísanos con mínimo 12 horas de anticipación.</li>
+          <li>• Si no asistes y no avisas con tiempo, la próxima cita podrá requerir confirmación previa.</li>
+          <li>• El tiempo de espera máximo es de 10 minutos.</li>
+        </ul>
+
+        <p className="mt-3 text-xs text-[#6A5A57]">
+          Al reservar, aceptas estas condiciones de atención.
+        </p>
+      </div>
     </section>
   );
 }
+
