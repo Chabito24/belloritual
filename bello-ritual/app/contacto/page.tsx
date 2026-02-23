@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ContactForm from "@/components/ContactForm";
+import ContactClient from "./ContactClient";
 
 const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
 
@@ -22,7 +22,7 @@ export default function ContactoPage() {
       </div>
 
       {/* Form */}
-      <ContactForm />
+      <ContactClient />
 
       {/* WhatsApp directo */}
       <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 text-center shadow-sm">
