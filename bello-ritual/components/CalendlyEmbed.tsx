@@ -46,11 +46,7 @@ export default function CalendlyEmbed({
 
   return (
     <div className="mt-8 overflow-hidden rounded-2xl border border-[#E9D9C9] bg-white/70 shadow-sm">
-      <div ref={hostRef} className="w-full" style={{ 
-        minWidth: 320, 
-        height: "calc(100vh - 260px)",
-        minHeight: 820
-        }} />
+      <div ref={hostRef} className="w-full" style={{ minWidth: 320, height }} />
 
       <Script
         src="https://assets.calendly.com/assets/external/widget.js"

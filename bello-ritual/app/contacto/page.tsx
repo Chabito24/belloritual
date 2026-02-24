@@ -1,5 +1,5 @@
 import Link from "next/link";
-import ContactClient from "./ContactClient";
+import ContactForm from "@/components/ContactForm";
 
 const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
 // const GOOGLE_FORM_URL =
@@ -33,7 +33,7 @@ export default function ContactoPage() {
       </div>
 
       {/* Formulario de contacto / lead */}
-      <ContactClient />
+      <ContactForm  />
 
       {/* Formulario de seguimiento (Google Form -> Sheets) */}
 {/* <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 shadow-sm">

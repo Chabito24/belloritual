@@ -60,7 +60,7 @@ export default function ContactForm() {
         <label className="grid gap-1">
           <span className="text-sm">Mensaje *</span>
           <textarea
-            className="w-full min-h-120px rounded-xl border border-[#E9D9C9] bg-white/70 px-3 py-2 outline-none focus:border-[#B68A3A]"
+            className="w-full min-h-30 rounded-xl border border-[#E9D9C9] bg-white/70 px-3 py-2 outline-none focus:border-[#B68A3A]"
             value={mensaje}
             onChange={(e) => setMensaje(e.target.value)}
             placeholder="Cuéntanos qué necesitas..."

@@ -10,7 +10,7 @@ export default function ReservarPage() {
     "&primary_color=c9a35b";
 
   return (
-    <section className="py-10">
+    <section className="py-10 space-y-6">
       <h1 className="text-3xl font-semibold">Reserva tu cita</h1>
       <p className="mt-2 text-sm opacity-80">
         Elige el horario y confirma tu reserva.
@@ -19,7 +19,7 @@ export default function ReservarPage() {
       <CalendlyEmbed url={url} height={700} />
 
       {/* Política de reserva */}
-      <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-6 shadow-sm">
+      <div className="rounded-2xl border border-[#E9D9C9] bg-white/70 p-6 shadow-sm">
         <h2 className="text-xl font-semibold text-[#2B1B14]">Política de reserva</h2>
 
         <ul className="mt-3 space-y-2 text-sm text-[#5B463D]">

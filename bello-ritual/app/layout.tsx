@@ -81,7 +81,7 @@ export const metadata: Metadata = {
   description: "Lashes, uñas y depilación — reserva tu cita en minutos.",
 };
 
-const WHATSAPP_NUMBER = "573124567890"; // cambia luego
+const WHATSAPP_NUMBER = "573163044957"; // cambia luego
 const ADDRESS = "Bello, Antioquia - Avenida 40 # 55 - 98"; // cambia luego
 
 export default function RootLayout({
@@ -235,7 +235,7 @@ export default function RootLayout({
                     target="_blank"
                     rel="noreferrer"
                   >
-                    (+57) 316 304 4957
+                    (+57) 316 304 49 57 
                   </a>
                 </p>
                 <p className="mt-1">⏰ Lun–Sáb: 9:00 a.m. – 7:00 p.m.</p>
