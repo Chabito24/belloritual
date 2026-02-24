@@ -5,6 +5,7 @@ import DropdownCloser from "@/components/DropdownCloser";
 import ChevronDownIcon from "@/components/ChevronDownIcon";
 import WhatsAppFloatingButton from "@/components/WhatsAppFloatingButton";
 import MobileMenu from "@/components/MobileMenu";
+import Image from "next/image";
 
 function TikTokIcon({ className = "" }: { className?: string }) {
   return (
@@ -102,9 +103,23 @@ export default function RootLayout({
 
           {/* Main nav */}
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
-            <Link href="/" className="text-lg font-semibold tracking-tight">
-              Bello Ritual
-            </Link>
+            <Link href="/" className="flex items-center gap-3">
+            <Image
+              src="/logo.png"
+              alt="Bello Ritual"
+              width={44}
+              height={44}
+              className="h-11 w-11 rounded-md object-contain"
+              priority
+            />
+
+            <div className="leading-tight">
+              <p className="text-base font-semibold text-[#2B1B14]">Bello Ritual</p>
+              <p className="hidden text-xs text-[#5B463D] sm:block">
+                Pestañas • Uñas • Depilación
+              </p>
+            </div>
+          </Link>
 
             {/* NAV DESKTOP */}
             <nav className="hidden items-center gap-6 text-sm md:flex">
