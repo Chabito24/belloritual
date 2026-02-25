@@ -105,7 +105,7 @@ export default function RootLayout({
           <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3">
             <Link href="/" className="flex items-center gap-3">
             <Image
-              src="/logo.png"
+              src="/logo.webp"
               alt="Bello Ritual"
               width={44}
               height={44}

@@ -2,6 +2,7 @@ import Link from "next/link";
 import HomeHero from "@/components/HomeHero";
 import HomeFinalCTA from "@/components/HomeFinalCTA";
 import HomeBenefitsMod from "../components/HomeBenefits";
+import Image from "next/image";
 
 const HomeBenefits =
   (HomeBenefitsMod as any).default ?? HomeBenefitsMod;
@@ -21,6 +22,18 @@ export default function HomePage() {
 
         {/* SERVICIOS (3 CARDS) */}
         <section id="servicios" className="scroll-mt-28">
+          <div className="relative overflow-hidden rounded-3xl">
+            <Image
+              src="/img/hero.webp"
+              alt="Bello Ritual"
+              fill
+              priority
+              sizes="100vw"
+              className="object-cover"
+            />
+            {/* si ya tienes overlay, texto, botones, déjalos tal cual */}
+          </div>
+          
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold">Nuestros Servicios</h2>
@@ -39,8 +52,14 @@ export default function HomePage() {
           <div className="mt-6 grid gap-6 md:grid-cols-3">
             {/* Pestañas */}
             <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-5 shadow-sm">
-              <div className="aspect-4/3 rounded-2xl bg-[#FBF7F2] grid place-items-center text-sm text-[#5B463D]">
-                Imagen pestañas
+              <div className="relative aspect-4/3 rounded-2xl bg-[#FBF7F2] overflow-hidden">
+                <Image
+                  src="/img/pesta.webp"
+                  alt="Pestañas"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
               </div>
               <h3 className="mt-4 text-xl font-semibold">Pestañas</h3>
               <p className="mt-1 text-sm text-[#5B463D]">
@@ -64,8 +83,14 @@ export default function HomePage() {
 
             {/* Uñas */}
             <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-5 shadow-sm">
-              <div className="aspect-4/3 rounded-2xl bg-[#FBF7F2] grid place-items-center text-sm text-[#5B463D]">
-                Imagen uñas
+              <div className="relative aspect-4/3 rounded-2xl bg-[#FBF7F2] overflow-hidden">
+                <Image
+                  src="/img/unas.webp"
+                  alt="Uñas"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
               </div>
               <h3 className="mt-4 text-xl font-semibold">Uñas</h3>
               <p className="mt-1 text-sm text-[#5B463D]">
@@ -89,9 +114,15 @@ export default function HomePage() {
 
             {/* Depilación */}
             <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-5 shadow-sm">
-              <div className="aspect-4/3 rounded-2xl bg-[#FBF7F2] grid place-items-center text-sm text-[#5B463D]">
-                Imagen depilación
-              </div>
+              <div className="relative aspect-4/3 rounded-2xl bg-[#FBF7F2] overflow-hidden">
+              <Image
+                src="/img/depila.webp"
+                alt="Depilación"
+                fill
+                sizes="(max-width: 768px) 100vw, 33vw"
+                className="object-cover"
+              />
+            </div>
               <h3 className="mt-4 text-xl font-semibold">Depilación</h3>
               <p className="mt-1 text-sm text-[#5B463D]">Facial y corporal.</p>
               <div className="mt-4 flex gap-3">

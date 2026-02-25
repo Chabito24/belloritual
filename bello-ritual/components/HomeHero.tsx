@@ -1,16 +1,24 @@
 "use client";
 // components/HomeHero.tsx
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HomeHero() {
   return (
-    <section className="relative overflow-hidden rounded-3xl border border-[#E9D9C9] bg-white/60">
-      {/* Placeholder imagen (luego lo reemplazas por <Image />) */}
-      <div className="absolute inset-0 opacity-25">
-        <div className="h-full w-full bg-linear-to-br from-[#E7D2A6] to-transparent" />
-      </div>
+    <section className="relative overflow-hidden rounded-3xl border border-[#E9D9C9] bg-white/60 min-h-300px">
+      <Image
+        src="/img/hero.webp"
+        alt="Bello Ritual"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+      />
 
-      <div className="relative mx-auto max-w-6xl px-6 py-14 text-center">
+      {/* Overlay recomendado */}
+      <div className="absolute inset-0 bg-white/60" />
+
+      <div className="relative z-10 mx-auto max-w-6xl px-6 py-14 text-center">
         <h1 className="text-4xl font-semibold text-[#2B1B14]">
           Realza tu belleza con nosotros
         </h1>

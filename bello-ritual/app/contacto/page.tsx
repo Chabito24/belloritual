@@ -3,6 +3,7 @@ import ContactForm from "@/components/ContactForm";
 import MapEmbedSection from "@/components/MapEmbed";
 import BusinessHoursSection from "@/components/BusinessHours";
 import { BUSINESS_INFO } from "@/lib/business"; // si tu archivo se llama bussines.ts, vuelve a "@/lib/bussines"
+import Image from "next/image";
 
 const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
 // const GOOGLE_FORM_URL =
@@ -12,6 +13,43 @@ export default function ContactoPage() {
   return (
     <section className="space-y-10">
       {/* Hero */}
+    <div className="relative overflow-hidden rounded-3xl border border-[#E9D9C9] bg-white/60 p-10 text-center shadow-sm min-h-320px">
+      <Image
+        src="/img/contacto.webp"
+        alt="Contáctanos - Bello Ritual"
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+      />
+
+      {/* Overlay para legibilidad */}
+      <div className="absolute inset-0 bg-white/60" />
+
+      {/* Tu contenido existente, intacto */}
+      <div className="relative z-10">
+        <h1 className="text-4xl font-semibold">Contáctanos</h1>
+        <p className="mt-3 text-sm text-[#5B463D]">
+          Si tienes dudas o quieres más información, escríbenos y te responderemos pronto.
+        </p>
+
+        <div className="mt-6 flex flex-col items-center justify-center gap-3 sm:flex-row">
+          <Link
+            href="#form"
+            className="inline-flex rounded-full bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white hover:opacity-90"
+          >
+            Enviar consulta
+          </Link>
+
+          <Link
+            href="/reservar"
+            className="inline-flex rounded-full border border-[#E9D9C9] bg-white/70 px-6 py-3 text-sm font-medium text-[#2B1B14] hover:border-[#B68A3A]"
+          >
+            Ir a reservas
+          </Link>
+        </div>
+      </div>
+    </div>
       <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-10 text-center shadow-sm">
         <h1 className="text-4xl font-semibold">Contáctanos</h1>
         <p className="mt-3 text-sm text-[#5B463D]">
