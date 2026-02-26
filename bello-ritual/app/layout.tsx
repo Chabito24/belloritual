@@ -190,7 +190,7 @@ export default function RootLayout({
               <MobileMenu />
               {/* Iconos redes (header) */}
               <a
-                href="#"
+                href="https://www.tiktok.com/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="TikTok"
@@ -201,7 +201,7 @@ export default function RootLayout({
               </a>
 
               <a
-                href="#"
+                href="https://www.instagram.com/"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="Instagram"
@@ -212,7 +212,7 @@ export default function RootLayout({
               </a>
 
               <a
-                href="#"
+                href="https://www.youtube.com/@BelloRitual"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="YouTube"
@@ -260,7 +260,7 @@ export default function RootLayout({
                 <p className="font-semibold text-[#2B1B14]">Síguenos</p>
                 <div className="mt-3 flex items-center gap-3">
                   <a
-                    href="#"
+                    href="https://www.tiktok.com/"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E9D9C9] bg-white/70 text-[#B68A3A] hover:border-[#B68A3A]"
@@ -271,7 +271,7 @@ export default function RootLayout({
                   </a>
 
                   <a
-                    href="#"
+                    href="https://www.instagram.com/"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E9D9C9] bg-white/70 text-[#B68A3A] hover:border-[#B68A3A]"
@@ -282,7 +282,7 @@ export default function RootLayout({
                   </a>
 
                   <a
-                    href="#"
+                    href="https://www.youtube.com/@BelloRitual"
                     target="_blank"
                     rel="noreferrer"
                     className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-[#E9D9C9] bg-white/70 text-[#B68A3A] hover:border-[#B68A3A]"

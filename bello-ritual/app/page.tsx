@@ -4,9 +4,7 @@ import HomeFinalCTA from "@/components/HomeFinalCTA";
 import HomeBenefitsMod from "../components/HomeBenefits";
 import Image from "next/image";
 
-const HomeBenefits =
-  (HomeBenefitsMod as any).default ?? HomeBenefitsMod;
-
+const HomeBenefits = (HomeBenefitsMod as any).default ?? HomeBenefitsMod;
 
 const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
 
@@ -22,18 +20,6 @@ export default function HomePage() {
 
         {/* SERVICIOS (3 CARDS) */}
         <section id="servicios" className="scroll-mt-28">
-          <div className="relative overflow-hidden rounded-3xl">
-            <Image
-              src="/img/hero.webp"
-              alt="Bello Ritual"
-              fill
-              priority
-              sizes="100vw"
-              className="object-cover"
-            />
-            {/* si ya tienes overlay, texto, botones, déjalos tal cual */}
-          </div>
-          
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="text-2xl font-semibold">Nuestros Servicios</h2>
@@ -115,14 +101,14 @@ export default function HomePage() {
             {/* Depilación */}
             <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-5 shadow-sm">
               <div className="relative aspect-4/3 rounded-2xl bg-[#FBF7F2] overflow-hidden">
-              <Image
-                src="/img/depila.webp"
-                alt="Depilación"
-                fill
-                sizes="(max-width: 768px) 100vw, 33vw"
-                className="object-cover"
-              />
-            </div>
+                <Image
+                  src="/img/depila.webp"
+                  alt="Depilación"
+                  fill
+                  sizes="(max-width: 768px) 100vw, 33vw"
+                  className="object-cover"
+                />
+              </div>
               <h3 className="mt-4 text-xl font-semibold">Depilación</h3>
               <p className="mt-1 text-sm text-[#5B463D]">Facial y corporal.</p>
               <div className="mt-4 flex gap-3">
@@ -144,31 +130,56 @@ export default function HomePage() {
         </section>
 
         <HomeBenefits />
-        <HomeFinalCTA />
+        {/* ✅ HOME FINAL CTA con imagen de fondo (rostro.webp) */}
+        <section className="relative overflow-hidden rounded-3xl border border-[#E9D9C9] shadow-sm">
+          <Image
+            src="/img/rostro.webp"
+            alt="Bello Ritual - Lista para tu cambio"
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
+          <div className="absolute inset-0 bg-white/75" />
+          <div className="relative z-10">
+            <HomeFinalCTA embedded />
+          </div>
+        </section>
 
         {/* CONTACTO */}
         <section id="contacto" className="scroll-mt-28">
-          <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 p-8 shadow-sm">
-            <h2 className="text-2xl font-semibold">¿Tienes preguntas?</h2>
-            <p className="mt-2 text-sm text-[#5B463D]">
-              Escríbenos por WhatsApp o usa el formulario en la página de contacto.
-            </p>
+          {/* ✅ Fondo con mensaje.webp */}
+          <div className="relative overflow-hidden rounded-3xl border border-[#E9D9C9] shadow-sm">
+            <Image
+              src="/img/mensaje.webp"
+              alt="Bello Ritual - Contacto"
+              fill
+              className="object-cover"
+              sizes="100vw"
+            />
+            <div className="absolute inset-0 bg-white/75" />
 
-            <div className="mt-6 flex flex-wrap gap-3">
-              <Link
-                href="/contacto#form"
-                className="rounded-full bg-[#B68A3A] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
-              >
-                Ir al formulario
-              </Link>
-              <a
-                href={waLink("Hola, tengo una pregunta sobre los servicios de Bello Ritual.")}
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-full border border-[#E9D9C9] bg-white/70 px-5 py-2.5 text-sm font-medium hover:border-[#B68A3A]"
-              >
-                WhatsApp
-              </a>
+            <div className="relative z-10 rounded-3xl bg-white/60 p-8">
+              <h2 className="text-2xl font-semibold">¿Tienes preguntas?</h2>
+              <p className="mt-2 text-sm text-[#5B463D]">
+                Escríbenos por WhatsApp o usa el formulario en la página de contacto.
+              </p>
+
+              <div className="mt-6 flex flex-wrap gap-3">
+                <Link
+                  href="/contacto#form"
+                  className="rounded-full bg-[#B68A3A] px-5 py-2.5 text-sm font-medium text-white hover:opacity-90"
+                >
+                  Ir al formulario
+                </Link>
+                <a
+                  href={waLink("Hola, tengo una pregunta sobre los servicios de Bello Ritual.")}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-full border border-[#E9D9C9] bg-white/70 px-5 py-2.5 text-sm font-medium hover:border-[#B68A3A]"
+                >
+                  WhatsApp
+                </a>
+              </div>
             </div>
           </div>
         </section>

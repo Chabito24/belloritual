@@ -4,6 +4,7 @@ import { buildWhatsAppUrl, serviceWhatsAppMessage } from "@/lib/whatsapp";
 import { notFound } from "next/navigation";
 import CategoryTabs from "@/components/CategoryTabs";
 import ServiceCard from "@/components/ServiceCard";
+import Image from "next/image";
 import {
   CATEGORIES,
   SERVICES,
@@ -17,7 +18,7 @@ function normalizeSlug(value: string) {
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, ""); // quita tildes: uñas->unas, depilación->depilacion
+    .replace(/[\u0300-\u036f]/g, "");
 }
 
 export function generateStaticParams() {
@@ -54,22 +55,48 @@ export default async function CategoriaPage({
       maximumFractionDigits: 0,
     }).format(v);
 
+  // ✅ CORREGIDO: imagen por categoría con tus nombres reales
+  const headerImage =
+    catSlug === "pestanas"
+      ? "/img/pesta.webp"
+      : catSlug === "unas"
+        ? "/img/unas.webp"
+        : "/img/depila.webp"; // depilacion
+
+  const headerAlt = `${cat.label} - Bello Ritual`;
+
   return (
     <section className="py-10">
       <div className="mx-auto w-full max-w-6xl px-4">
-        <header className="rounded-2xl border border-[#E9D9C9] bg-white/60 p-8 text-center">
-          <h1 className="text-3xl font-semibold text-[#2B1B14]">
-            {cat.label}
-          </h1>
-          <p className="mt-2 text-sm text-[#6A5A57]">{cat.subtitle}</p>
+        {/* ✅ Header con imagen de fondo tipo hero */}
+        <header className="relative overflow-hidden rounded-2xl border border-[#E9D9C9] bg-white/60 p-8 text-center">
+          {/* Fondo */}
+          <Image
+            src={headerImage}
+            alt={headerAlt}
+            fill
+            className="object-cover"
+            sizes="100vw"
+          />
 
-          <div className="mt-6">
-            <Link
-              href="/reservar"
-              className="inline-flex items-center justify-center rounded-xl bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white transition hover:opacity-90"
-            >
-              Reservar cita →
-            </Link>
+          {/* Overlay suave */}
+          <div className="absolute inset-0 bg-white/75" />
+
+          {/* Contenido encima */}
+          <div className="relative z-10">
+            <h1 className="text-3xl font-semibold text-[#2B1B14]">
+              {cat.label}
+            </h1>
+            <p className="mt-2 text-sm text-[#6A5A57]">{cat.subtitle}</p>
+
+            <div className="mt-6">
+              <Link
+                href="/reservar"
+                className="inline-flex items-center justify-center rounded-xl bg-[#B68A3A] px-6 py-3 text-sm font-medium text-white transition hover:opacity-90"
+              >
+                Reservar cita →
+              </Link>
+            </div>
           </div>
         </header>
 

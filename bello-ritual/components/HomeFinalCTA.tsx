@@ -2,10 +2,16 @@
 // components/HomeFinalCTA.tsx
 import Link from "next/link";
 
-export default function HomeFinalCTA() {
+export default function HomeFinalCTA({ embedded = false }: { embedded?: boolean }) {
   return (
-    <section className="mt-12">
-      <div className="rounded-3xl border border-[#E9D9C9] bg-white/60 px-6 py-10 text-center">
+    <section className={embedded ? "" : "mt-12"}>
+      <div
+        className={
+          embedded
+            ? "px-6 py-10 text-center"
+            : "rounded-3xl border border-[#E9D9C9] bg-white/60 px-6 py-10 text-center"
+        }
+      >
         <h2 className="text-2xl font-semibold text-[#2B1B14]">
           ¿Lista para tu cambio?
         </h2>
