@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation"; // ✅ NUEVO
 
 const WA_PHONE = "573163044957"; // cámbialo luego
 
@@ -9,6 +10,8 @@ function buildWaLink(message: string) {
 }
 
 export default function ContactForm() {
+  const router = useRouter(); // ✅ NUEVO
+
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
   const [mensaje, setMensaje] = useState("");
@@ -22,6 +25,9 @@ export default function ContactForm() {
       (mensaje ? `Mensaje: ${mensaje}` : "Quiero más información sobre sus servicios.");
 
     window.open(buildWaLink(text), "_blank", "noopener,noreferrer");
+
+    // ✅ NUEVO: redirige a la página de agradecimiento
+    router.push("/gracias?canal=contacto");
   }
 
   return (
