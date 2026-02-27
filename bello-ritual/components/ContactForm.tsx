@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation"; // ✅ NUEVO
+import { useRouter } from "next/navigation";
 
 const WA_PHONE = "573163044957"; // cámbialo luego
 
@@ -9,8 +9,27 @@ function buildWaLink(message: string) {
   return `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;
 }
 
+// ✅ NUEVO: guarda el lead sin bloquear el flujo
+function saveLead(payload: {
+  nombre: string;
+  telefono: string;
+  mensaje: string;
+  canal: string;
+}) {
+  try {
+    fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true,
+    }).catch(() => {});
+  } catch {
+    // no-op
+  }
+}
+
 export default function ContactForm() {
-  const router = useRouter(); // ✅ NUEVO
+  const router = useRouter();
 
   const [nombre, setNombre] = useState("");
   const [telefono, setTelefono] = useState("");
@@ -24,9 +43,18 @@ export default function ContactForm() {
       `Mi WhatsApp: ${telefono || "___"}\n` +
       (mensaje ? `Mensaje: ${mensaje}` : "Quiero más información sobre sus servicios.");
 
+    // ✅ NUEVO: guarda lead (no bloquea)
+    saveLead({
+      nombre,
+      telefono,
+      mensaje,
+      canal: "contacto",
+    });
+
+    // ✅ Mantiene tu comportamiento actual
     window.open(buildWaLink(text), "_blank", "noopener,noreferrer");
 
-    // ✅ NUEVO: redirige a la página de agradecimiento
+    // ✅ Mantiene tu comportamiento actual
     router.push("/gracias?canal=contacto");
   }
 
