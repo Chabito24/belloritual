@@ -1,5 +1,13 @@
 {
   "css.lint.unknownAtRules": "ignore",
   "scss.lint.unknownAtRules": "ignore",
-  "less.lint.unknownAtRules": "ignore"
-}   
+  "less.lint.unknownAtRules": "ignore",
+
+  "typescript.tsserver.exclude": ["**/.next/**"],
+  "search.exclude": {
+    "**/.next/**": true
+  },
+  "files.watcherExclude": {
+    "**/.next/**": true
+  }
+}

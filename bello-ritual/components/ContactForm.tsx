@@ -12,6 +12,7 @@ function buildWaLink(message: string) {
 // ✅ NUEVO: guarda el lead sin bloquear el flujo
 function saveLead(payload: {
   nombre: string;
+  correo?: string | null;
   telefono: string;
   mensaje: string;
   canal: string;
@@ -32,6 +33,7 @@ export default function ContactForm() {
   const router = useRouter();
 
   const [nombre, setNombre] = useState("");
+  const [correo, setCorreo] = useState("");
   const [telefono, setTelefono] = useState("");
   const [mensaje, setMensaje] = useState("");
 
@@ -40,12 +42,14 @@ export default function ContactForm() {
 
     const text =
       `Hola, soy ${nombre || "___"}.\n` +
+      (correo ? `Mi correo: ${correo}\n` : "") +
       `Mi WhatsApp: ${telefono || "___"}\n` +
       (mensaje ? `Mensaje: ${mensaje}` : "Quiero más información sobre sus servicios.");
 
     // ✅ NUEVO: guarda lead (no bloquea)
     saveLead({
       nombre,
+      correo: correo.trim() ? correo.trim().toLowerCase() : null,
       telefono,
       mensaje,
       canal: "contacto",
@@ -77,6 +81,17 @@ export default function ContactForm() {
             value={nombre}
             onChange={(e) => setNombre(e.target.value)}
             required
+          />
+        </label>
+
+        <label className="grid gap-1">
+          <span className="text-sm">Correo (opcional)</span>
+          <input
+            type="email"
+            className="w-full rounded-xl border border-[#E9D9C9] bg-white/70 px-3 py-2 outline-none focus:border-[#B68A3A]"
+            value={correo}
+            onChange={(e) => setCorreo(e.target.value)}
+            placeholder="tucorreo@ejemplo.com"
           />
         </label>
 

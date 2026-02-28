@@ -82,12 +82,14 @@ model usuarios_admin {
   activo             Boolean              @default(true)
   creado_en          DateTime             @default(now()) @db.Timestamp(0)
   actualizado_en     DateTime             @default(now()) @db.Timestamp(0)
+  admin_sesiones     admin_sesiones[]
   blog_publicaciones blog_publicaciones[]
 }
 
 model leads {
   id        Int      @id @default(autoincrement())
   nombre    String   @db.VarChar(80)
+  correo    String?  @db.VarChar(150)
   telefono  String   @db.VarChar(30)
   mensaje   String   @db.Text
   canal     String   @db.VarChar(30)
@@ -95,6 +97,20 @@ model leads {
   updatedAt DateTime @default(now()) @db.Timestamp(0)
 
   @@index([canal], map: "idx_leads_canal")
+  @@index([correo], map: "idx_leads_correo")
+}
+
+model admin_sesiones {
+  id               BigInt         @id @default(autoincrement()) @db.UnsignedBigInt
+  usuario_admin_id Int
+  token_hash       String         @unique(map: "uk_admin_sesiones_token_hash") @db.Char(64)
+  expira_en        DateTime       @db.DateTime(0)
+  creado_en        DateTime       @default(now()) @db.Timestamp(0)
+  ip               String?        @db.VarChar(45)
+  user_agent       String?        @db.VarChar(255)
+  usuarios_admin   usuarios_admin @relation(fields: [usuario_admin_id], references: [id], onDelete: Cascade, map: "fk_admin_sesiones_usuario_admin")
+
+  @@index([usuario_admin_id], map: "idx_admin_sesiones_usuario_admin_id")
 }
 
 enum materiales_tipo {
