@@ -137,7 +137,7 @@ export default function HomePage() {
             alt="Bello Ritual - Lista para tu cambio"
             fill
             className="object-cover"
-            sizes="100vw"
+            sizes="(max-width: 1024px) 100vw, 1152px"
           />
           <div className="absolute inset-0 bg-white/75" />
           <div className="relative z-10">
@@ -154,7 +154,7 @@ export default function HomePage() {
               alt="Bello Ritual - Contacto"
               fill
               className="object-cover"
-              sizes="100vw"
+              sizes="(max-width: 1024px) 100vw, 1152px"
             />
             <div className="absolute inset-0 bg-white/75" />
 

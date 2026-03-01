@@ -61,7 +61,7 @@ export default async function CategoriaPage({
       ? "/img/pesta.webp"
       : catSlug === "unas"
         ? "/img/unas.webp"
-        : "/img/depila.webp"; // depilacion
+        : "/img/rostro.webp"; // depilacion
 
   const headerAlt = `${cat.label} - Bello Ritual`;
 
@@ -72,6 +72,7 @@ export default async function CategoriaPage({
         <header className="relative overflow-hidden rounded-2xl border border-[#E9D9C9] bg-white/60 p-8 text-center">
           {/* Fondo */}
           <Image
+            loading="lazy"
             src={headerImage}
             alt={headerAlt}
             fill

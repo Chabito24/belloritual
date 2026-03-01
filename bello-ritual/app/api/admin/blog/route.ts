@@ -84,16 +84,16 @@ export async function POST(req: NextRequest) {
   const imagen_url = body?.imagen_url != null ? String(body.imagen_url).trim() : null;
 
   // estado: BORRADOR|PUBLICADO|ARCHIVADO
-  const estadoRaw = String(body?.estado ?? "BORRADOR").toUpperCase();
-  const estado =
-    estadoRaw === "PUBLICADO" || estadoRaw === "ARCHIVADO" ? estadoRaw : "BORRADOR";
+    const estadoRaw = String(body?.estado ?? "BORRADOR").toUpperCase();
+    const estado = estadoRaw === "PUBLICADO" ? "PUBLICADO" : "BORRADOR";
 
-  if (!titulo || !contenido) {
+    // ✅ regla: no se permite crear ARCHIVADO directo
+    if (estadoRaw === "ARCHIVADO") {
     return NextResponse.json(
-      { ok: false, error: "TITULO_Y_CONTENIDO_REQUERIDOS" },
-      { status: 400 }
+        { ok: false, error: "NO_SE_PUEDE_CREAR_ARCHIVADO" },
+        { status: 400 }
     );
-  }
+    }
 
   const baseSlug = body?.slug ? slugify(String(body.slug)) : slugify(titulo);
   const slug = await makeUniqueSlug(baseSlug);
@@ -114,4 +114,87 @@ export async function POST(req: NextRequest) {
   });
 
   return NextResponse.json({ ok: true, item }, { status: 201 });
+}
+export async function PATCH(req: NextRequest) {
+  const admin = await requireAdmin(req);
+  if (!admin) return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
+
+  const body = await req.json().catch(() => ({}));
+
+  const id = Number(body?.id);
+  if (!Number.isFinite(id) || id <= 0) {
+    return NextResponse.json({ ok: false, error: "ID_INVALIDO" }, { status: 400 });
+  }
+
+  const estadoRaw = String(body?.estado ?? "").toUpperCase();
+  const nextEstado =
+    estadoRaw === "PUBLICADO" || estadoRaw === "ARCHIVADO" ? estadoRaw : "BORRADOR";
+
+  const current = await prisma.blog_publicaciones.findUnique({
+    where: { id },
+    select: { estado: true, publicado_en: true },
+  });
+
+  if (!current) {
+    return NextResponse.json({ ok: false, error: "NO_EXISTE" }, { status: 404 });
+  }
+
+  // ❌ regla: no se puede archivar si no ha sido publicado
+  if (nextEstado === "ARCHIVADO" && current.estado !== "PUBLICADO") {
+    return NextResponse.json(
+      { ok: false, error: "SOLO_SE_PUEDE_ARCHIVAR_SI_ESTA_PUBLICADO" },
+      { status: 400 }
+    );
+  }
+
+  const data: any = { estado: nextEstado };
+
+  // ✅ al publicar, si no tenía fecha, asignar
+  if (nextEstado === "PUBLICADO" && !current.publicado_en) {
+    data.publicado_en = new Date();
+  }
+
+  // opcional: si vuelve a BORRADOR, quitar fecha
+  if (nextEstado === "BORRADOR") {
+    data.publicado_en = null;
+  }
+
+  const item = await prisma.blog_publicaciones.update({
+    where: { id },
+    data,
+  });
+
+  return NextResponse.json({ ok: true, item });
+}
+export async function DELETE(req: NextRequest) {
+  const admin = await requireAdmin(req);
+  if (!admin) return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
+
+  const body = await req.json().catch(() => ({}));
+
+  const id = Number(body?.id);
+  if (!Number.isFinite(id) || id <= 0) {
+    return NextResponse.json({ ok: false, error: "ID_INVALIDO" }, { status: 400 });
+  }
+
+  const current = await prisma.blog_publicaciones.findUnique({
+    where: { id },
+    select: { estado: true },
+  });
+
+  if (!current) {
+    return NextResponse.json({ ok: false, error: "NO_EXISTE" }, { status: 404 });
+  }
+
+  // Regla: NO borrar PUBLICADO (primero archivar)
+  if (current.estado === "PUBLICADO") {
+    return NextResponse.json(
+      { ok: false, error: "NO_SE_PUEDE_ELIMINAR_PUBLICADO" },
+      { status: 400 }
+    );
+  }
+
+  await prisma.blog_publicaciones.delete({ where: { id } });
+
+  return NextResponse.json({ ok: true });
 }

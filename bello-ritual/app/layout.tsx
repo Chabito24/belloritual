@@ -80,6 +80,11 @@ function YouTubeIcon({ className = "" }: { className?: string }) {
 export const metadata: Metadata = {
   title: "Bello Ritual",
   description: "Lashes, uñas y depilación — reserva tu cita en minutos.",
+  alternates: {
+    types: {
+      "application/rss+xml": [{ url: "/feed.xml", title: "Bello Ritual | Blog" }],
+    },
+  },
 };
 
 const WHATSAPP_NUMBER = "573163044957"; // cambia luego
@@ -182,6 +187,10 @@ export default function RootLayout({
 
               <Link href="/contacto" className="hover:text-[#B68A3A]">
                 Contacto
+              </Link>
+
+              <Link href="/blog" className="hover:text-[#B68A3A]">
+                Blog
               </Link>
             </nav>
 

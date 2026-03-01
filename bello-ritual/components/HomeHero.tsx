@@ -11,7 +11,7 @@ export default function HomeHero() {
         alt="Bello Ritual"
         fill
         priority
-        sizes="100vw"
+        sizes="(max-width: 1024px) 100vw, 1152px"
         className="object-cover"
       />
 
