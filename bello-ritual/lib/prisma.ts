@@ -34,7 +34,7 @@ function buildMariaDbAdapter() {
   });
 }
 
-const prisma =
+export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
     adapter: buildMariaDbAdapter(),
