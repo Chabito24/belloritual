@@ -1,6 +1,7 @@
 import Link from "next/link";
 import prisma from "@/lib/prisma";
 
+export const revalidate = 60; // cachea "n" segundos (ajustable)
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
