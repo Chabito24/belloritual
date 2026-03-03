@@ -75,7 +75,7 @@ export default function HomePage() {
                   alt="Uñas"
                   fill
                   sizes="(max-width: 768px) 100vw, 33vw"
-                  className="object-cover"
+                  className="object-cover" //comentario de prueba para ver cambios en el commit
                 />
               </div>
               <h3 className="mt-4 text-xl font-semibold">Uñas</h3>

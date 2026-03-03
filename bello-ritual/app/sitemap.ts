@@ -1,6 +1,6 @@
 import type { MetadataRoute } from "next";
 import prisma from "@/lib/prisma";
-export const revalidate = 60;
+export const revalidate = 60; 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 

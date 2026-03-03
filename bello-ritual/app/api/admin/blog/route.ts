@@ -85,16 +85,16 @@ export async function POST(req: NextRequest) {
   const imagen_url = body?.imagen_url != null ? String(body.imagen_url).trim() : null;
 
   // estado: BORRADOR|PUBLICADO|ARCHIVADO
-    const estadoRaw = String(body?.estado ?? "BORRADOR").toUpperCase();
-    const estado = estadoRaw === "PUBLICADO" ? "PUBLICADO" : "BORRADOR";
+  const estadoRaw = String(body?.estado ?? "BORRADOR").toUpperCase();
+  const estado = estadoRaw === "PUBLICADO" ? "PUBLICADO" : "BORRADOR";
 
-    // ✅ regla: no se permite crear ARCHIVADO directo
-    if (estadoRaw === "ARCHIVADO") {
+  // ✅ regla: no se permite crear ARCHIVADO directo
+  if (estadoRaw === "ARCHIVADO") {
     return NextResponse.json(
-        { ok: false, error: "NO_SE_PUEDE_CREAR_ARCHIVADO" },
-        { status: 400 }
+      { ok: false, error: "NO_SE_PUEDE_CREAR_ARCHIVADO" },
+      { status: 400 }
     );
-    }
+  }
 
   const baseSlug = body?.slug ? slugify(String(body.slug)) : slugify(titulo);
   const slug = await makeUniqueSlug(baseSlug);
@@ -114,8 +114,15 @@ export async function POST(req: NextRequest) {
     },
   });
 
+  // ✅ Revalidación DESPUÉS de crear
+  revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+  revalidatePath(`/blog/${slug}`);
+
   return NextResponse.json({ ok: true, item }, { status: 201 });
 }
+
 export async function PATCH(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (!admin) return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
@@ -165,8 +172,15 @@ export async function PATCH(req: NextRequest) {
     data,
   });
 
+  // ✅ Revalidación DESPUÉS de actualizar
+  revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+  if (item?.slug) revalidatePath(`/blog/${item.slug}`);
+
   return NextResponse.json({ ok: true, item });
 }
+
 export async function DELETE(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (!admin) return NextResponse.json({ ok: false, error: "UNAUTHORIZED" }, { status: 401 });
@@ -180,7 +194,7 @@ export async function DELETE(req: NextRequest) {
 
   const current = await prisma.blog_publicaciones.findUnique({
     where: { id },
-    select: { estado: true },
+    select: { estado: true, slug: true },
   });
 
   if (!current) {
@@ -196,6 +210,12 @@ export async function DELETE(req: NextRequest) {
   }
 
   await prisma.blog_publicaciones.delete({ where: { id } });
+
+  // ✅ Revalidación DESPUÉS de eliminar
+  revalidatePath("/blog");
+  revalidatePath("/sitemap.xml");
+  revalidatePath("/feed.xml");
+  if (current?.slug) revalidatePath(`/blog/${current.slug}`);
 
   return NextResponse.json({ ok: true });
 }

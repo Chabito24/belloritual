@@ -7,35 +7,36 @@ import prisma from "@/lib/prisma";
 export const runtime = "nodejs";
 
 const SESSION_DAYS = 7;
-
-type Bucket = { count: number; resetAt: number };
-
-const globalForRateLimit = globalThis as unknown as {
-  __adminLoginBuckets?: Map<string, Bucket>;
-};
-
-const buckets = globalForRateLimit.__adminLoginBuckets ?? new Map<string, Bucket>();
-globalForRateLimit.__adminLoginBuckets = buckets;
-
-function rateLimit(key: string, limit: number, windowMs: number) {
-  const now = Date.now();
-  const b = buckets.get(key);
-
-  if (!b || b.resetAt <= now) {
-    buckets.set(key, { count: 1, resetAt: now + windowMs });
-    return { ok: true };
-  }
-
-  if (b.count >= limit) {
-    return { ok: false, retryAfterSec: Math.ceil((b.resetAt - now) / 1000) };
-  }
-
-  b.count += 1;
-  return { ok: true };
-}
+const RATE_LIMIT_MAX = 3;
+const RATE_LIMIT_WINDOW_MIN = 10;
 
 function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
+}
+
+// ---- Rate limit fuerte (MySQL) ----
+async function countRecentAttempts(ip: string) {
+  const rows = await prisma.$queryRaw<{ cnt: bigint }[]>`
+    SELECT COUNT(*) AS cnt
+    FROM admin_login_attempts
+    WHERE ip = ${ip}
+      AND created_at > DATE_SUB(NOW(), INTERVAL ${RATE_LIMIT_WINDOW_MIN} MINUTE)
+  `;
+  return Number(rows?.[0]?.cnt ?? 0);
+}
+
+async function recordAttempt(ip: string, correo: string | null) {
+  await prisma.$executeRaw`
+    INSERT INTO admin_login_attempts (ip, correo, created_at)
+    VALUES (${ip}, ${correo}, NOW(3))
+  `;
+}
+
+async function clearAttempts(ip: string) {
+  await prisma.$executeRaw`
+    DELETE FROM admin_login_attempts
+    WHERE ip = ${ip}
+  `;
 }
 
 export async function POST(req: Request) {
@@ -50,16 +51,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Datos incompletos" }, { status: 400 });
     }
 
-    // ✅ Rate limit (3 intentos / 10 min por IP)
+    // IP y User-Agent (reutilizamos lo mismo en toda la función)
     const h = await headers();
     const ipRaw = (h.get("x-forwarded-for") ?? "").split(",")[0]?.trim();
     const ip = ipRaw || "unknown";
-    const key = `admin_login:${ip}`;
+    const user_agent = h.get("user-agent")?.slice(0, 255) ?? null;
 
-    const rl = rateLimit(key, 3, 10 * 60 * 1000);
-    if (!rl.ok) {
+    // ✅ Rate limit: 3 intentos / 10 min por IP
+    const cnt = await countRecentAttempts(ip);
+    if (cnt >= RATE_LIMIT_MAX) {
       return NextResponse.json(
-        { error: "RATE_LIMIT", retryAfterSec: rl.retryAfterSec },
+        { error: "RATE_LIMIT", retryAfterSec: RATE_LIMIT_WINDOW_MIN * 60 },
         { status: 429 }
       );
     }
@@ -67,15 +69,20 @@ export async function POST(req: Request) {
     const admin = await prisma.usuarios_admin.findUnique({ where: { correo } });
 
     if (!admin) {
+      // Registrar intento fallido
+      await recordAttempt(ip, correo);
       return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
     }
 
     if (!admin.activo) {
+      // (opcional) podrías registrar intento también, lo dejo igual para no cambiar tu comportamiento
       return NextResponse.json({ error: "Acceso no autorizado" }, { status: 403 });
     }
 
     const ok = await bcrypt.compare(password, admin.password_hash);
     if (!ok) {
+      // Registrar intento fallido
+      await recordAttempt(ip, correo);
       return NextResponse.json({ error: "Credenciales inválidas" }, { status: 401 });
     }
 
@@ -83,7 +90,6 @@ export async function POST(req: Request) {
     const token_hash = sha256(token);
     const expira_en = new Date(Date.now() + SESSION_DAYS * 24 * 60 * 60 * 1000);
 
-    const user_agent = h.get("user-agent")?.slice(0, 255) ?? null;
     const ipToStore = ip === "unknown" ? null : ip;
 
     await prisma.admin_sesiones.create({
@@ -104,8 +110,8 @@ export async function POST(req: Request) {
       maxAge: SESSION_DAYS * 24 * 60 * 60,
     });
 
-    // ✅ Reset del contador al login exitoso
-    buckets.delete(key);
+    // ✅ Limpia intentos al login exitoso
+    await clearAttempts(ip);
 
     return NextResponse.json({ ok: true });
   } catch (err) {
