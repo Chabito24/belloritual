@@ -149,6 +149,13 @@ export default function MobileMenu() {
                   Reserva              
               </Link>
 
+              <Link href="/blog" 
+              className="block rounded-xl px-3 py-3 hover:bg-[#FBF7F2]"
+              onClick={() => setOpen(false)}
+              >
+                Blog
+              </Link>
+
               <Link
                 href="/contacto"
                 className="block rounded-xl px-3 py-3 hover:bg-[#FBF7F2]"

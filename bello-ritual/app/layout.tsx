@@ -185,12 +185,12 @@ export default function RootLayout({
                 Reserva
               </Link>
 
-              <Link href="/contacto" className="hover:text-[#B68A3A]">
-                Contacto
-              </Link>
-
               <Link href="/blog" className="hover:text-[#B68A3A]">
                 Blog
+              </Link>
+
+              <Link href="/contacto" className="hover:text-[#B68A3A]">
+                Contacto
               </Link>
             </nav>
 
