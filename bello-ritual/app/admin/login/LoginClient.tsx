@@ -26,8 +26,17 @@ export default function LoginClient() {
     setLoading(false);
 
     if (!res.ok) {
-      const data = await res.json().catch(() => null);
-      setError(data?.error ?? "Error al iniciar sesión");
+      const data = await res.json().catch(() => ({} as any));
+
+      if (res.status === 429) {
+        const sec = Number(data?.retryAfterSec ?? 600);
+        setError(`Demasiados intentos. Intenta de nuevo en ${Math.ceil(sec / 60)} minuto(s).`);
+        return;
+      }
+
+      setError(data?.error === "Credenciales inválidas"
+        ? "Credenciales inválidas"
+        : "Error al iniciar sesión");
       return;
     }
 
