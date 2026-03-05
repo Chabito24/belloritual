@@ -6,7 +6,7 @@ import Image from "next/image";
 
 const HomeBenefits = (HomeBenefitsMod as any).default ?? HomeBenefitsMod;
 
-const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
+const WHATSAPP_NUMBER = "573332786626"; // luego lo cambias
 
 function waLink(message: string) {
   return `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(message)}`;

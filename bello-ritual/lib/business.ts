@@ -2,7 +2,7 @@ export const BUSINESS_INFO = {
   name: "Bello Ritual", // cambia si aplica
   addressLine1: "Bello, Antioquia - Avenida 40 # 55 - 98", // reemplaza por la real
   addressLine2: "Bloque 57 Apto 509",
-  phoneWhatsApp: "573163044957", // opcional si quieres mostrarlo aquí
+  phoneWhatsApp: "573332786626", // opcional si quieres mostrarlo aquí
   mapsPlaceUrl: "https://maps.app.goo.gl/qaAwsGzNAR1bJUWn9", // link para botón "Cómo llegar"
   mapsEmbedUrl: "https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d416.81310120689506!2d-75.54652911475291!3d6.340021162450437!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1ses!2sco!4v1771947006257!5m2!1ses!2sco", // temporal; luego pegas el embed real
   hours: [

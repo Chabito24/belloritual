@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 
-const WA_PHONE = "573163044957"; // cámbialo luego
+const WA_PHONE = "573332786626";
 
 function buildWaLink(message: string) {
   return `https://wa.me/${WA_PHONE}?text=${encodeURIComponent(message)}`;

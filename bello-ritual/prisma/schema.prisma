@@ -63,14 +63,19 @@ model servicio_materiales {
 }
 
 model servicios {
-  id                  Int                   @id @default(autoincrement()) @db.UnsignedInt
-  nombre              String                @unique(map: "uk_servicios_nombre") @db.VarChar(100)
-  descripcion         String?               @db.Text
-  margen_porcentaje   Decimal               @default(0.00) @db.Decimal(5, 2)
-  activo              Boolean               @default(true)
-  creado_en           DateTime              @default(now()) @db.Timestamp(0)
-  actualizado_en      DateTime              @default(now()) @db.Timestamp(0)
+  id                Int            @id @default(autoincrement()) @db.UnsignedInt
+  nombre            String         @unique(map: "uk_servicios_nombre") @db.VarChar(100)
+  descripcion       String?        @db.Text
+  margen_porcentaje Decimal        @default(0.00) @db.Decimal(5, 2)
+  activo            Boolean        @default(true)
+  creado_en         DateTime       @default(now()) @db.Timestamp(0)
+  actualizado_en    DateTime       @default(now()) @db.Timestamp(0)
+  subcategoria_id   Int?           @db.UnsignedInt
+  subcategorias     subcategorias? @relation(fields: [subcategoria_id], references: [id], onDelete: SetNull, map: "fk_servicios_subcategoria")
+
   servicio_materiales servicio_materiales[]
+
+  @@index([subcategoria_id], map: "idx_servicios_subcategoria_id")
 }
 
 model usuarios_admin {
@@ -124,6 +129,31 @@ enum materiales_unidad {
   MINUTO
   ML
   G
+}
+
+model categorias {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  nombre         String   @unique(map: "uk_categorias_nombre") @db.VarChar(80)
+  activo         Boolean  @default(true)
+  creado_en      DateTime @default(now()) @db.Timestamp(0)
+  actualizado_en DateTime @default(now()) @db.Timestamp(0)
+
+  subcategorias subcategorias[]
+}
+
+model subcategorias {
+  id             Int      @id @default(autoincrement()) @db.UnsignedInt
+  categoria_id   Int      @db.UnsignedInt
+  nombre         String   @db.VarChar(80)
+  activo         Boolean  @default(true)
+  creado_en      DateTime @default(now()) @db.Timestamp(0)
+  actualizado_en DateTime @default(now()) @db.Timestamp(0)
+
+  categorias categorias  @relation(fields: [categoria_id], references: [id], onDelete: Cascade, map: "fk_subcat_categoria")
+  servicios  servicios[]
+
+  @@unique([categoria_id, nombre], map: "uk_subcategorias_categoria_nombre")
+  @@index([categoria_id], map: "idx_subcategorias_categoria_id")
 }
 
 enum blog_publicaciones_estado {

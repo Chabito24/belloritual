@@ -5,7 +5,7 @@ import BusinessHoursSection from "@/components/BusinessHours";
 import { BUSINESS_INFO } from "@/lib/business"; // si tu archivo se llama bussines.ts, vuelve a "@/lib/bussines"
 import Image from "next/image";
 
-const WHATSAPP_NUMBER = "573163044957"; // luego lo cambias
+const WHATSAPP_NUMBER = "573332786626"; // luego lo cambias
 // const GOOGLE_FORM_URL =
 //   "https://docs.google.com/forms/d/e/1FAIpQLScaaL-vGVjm1Fv6io3RF3L0iZ9h3EYQSYusfEqB__f4h_weAA/viewform?usp=header"; sprint futuro
 
