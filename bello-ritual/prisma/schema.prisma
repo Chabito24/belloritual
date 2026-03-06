@@ -42,12 +42,16 @@ model materiales {
   id                  Int                   @id @default(autoincrement()) @db.UnsignedInt
   nombre              String                @unique(map: "uk_materiales_nombre") @db.VarChar(60)
   tipo                materiales_tipo
-  unidad              materiales_unidad
+  unidad_medida_id    Int?                  @db.UnsignedInt
+  unidad              materiales_unidad?
   costo_unitario      Decimal               @db.Decimal(12, 2)
   activo              Boolean               @default(true)
   creado_en           DateTime              @default(now()) @db.DateTime(0)
   actualizado_en      DateTime              @default(now()) @db.DateTime(0)
+  unidades_medida     unidades_medida?      @relation(fields: [unidad_medida_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "fk_materiales_unidad_medida")
   servicio_materiales servicio_materiales[]
+
+  @@index([unidad_medida_id], map: "idx_materiales_unidad_medida_id")
 }
 
 model servicio_materiales {
@@ -63,17 +67,19 @@ model servicio_materiales {
 }
 
 model servicios {
-  id                Int            @id @default(autoincrement()) @db.UnsignedInt
-  nombre            String         @unique(map: "uk_servicios_nombre") @db.VarChar(100)
-  descripcion       String?        @db.Text
-  margen_porcentaje Decimal        @default(0.00) @db.Decimal(5, 2)
-  activo            Boolean        @default(true)
-  creado_en         DateTime       @default(now()) @db.Timestamp(0)
-  actualizado_en    DateTime       @default(now()) @db.Timestamp(0)
-  subcategoria_id   Int?           @db.UnsignedInt
-  subcategorias     subcategorias? @relation(fields: [subcategoria_id], references: [id], onDelete: SetNull, map: "fk_servicios_subcategoria")
-
+  id                  Int                   @id @default(autoincrement()) @db.UnsignedInt
+  nombre              String                @unique(map: "uk_servicios_nombre") @db.VarChar(100)
+  duracion_minutos    Int?                  @db.UnsignedSmallInt
+  requiere_materiales Boolean               @default(false)
+  descripcion         String?               @db.Text
+  margen_porcentaje   Decimal               @default(0.00) @db.Decimal(5, 2)
+  precio_venta        Decimal?              @db.Decimal(12, 2)
+  activo              Boolean               @default(true)
+  creado_en           DateTime              @default(now()) @db.Timestamp(0)
+  actualizado_en      DateTime              @default(now()) @db.Timestamp(0)
+  subcategoria_id     Int?                  @db.UnsignedInt
   servicio_materiales servicio_materiales[]
+  subcategorias       subcategorias?        @relation(fields: [subcategoria_id], references: [id], map: "fk_servicios_subcategoria")
 
   @@index([subcategoria_id], map: "idx_servicios_subcategoria_id")
 }
@@ -118,6 +124,82 @@ model admin_sesiones {
   @@index([usuario_admin_id], map: "idx_admin_sesiones_usuario_admin_id")
 }
 
+model categorias {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  nombre                  String                    @unique(map: "uk_categorias_nombre") @db.VarChar(80)
+  slug                    String?                   @unique(map: "uq_categorias_slug") @db.VarChar(120)
+  activo                  Boolean                   @default(true)
+  es_destacada_home       Boolean                   @default(false)
+  creado_en               DateTime                  @default(now()) @db.Timestamp(0)
+  actualizado_en          DateTime                  @default(now()) @db.Timestamp(0)
+  subcategoria_categorias subcategoria_categorias[]
+  subcategorias           subcategorias[]
+}
+
+model subcategorias {
+  id                      Int                       @id @default(autoincrement()) @db.UnsignedInt
+  categoria_id            Int                       @db.UnsignedInt
+  nombre                  String                    @db.VarChar(80)
+  slug                    String?                   @unique(map: "uq_subcategorias_slug") @db.VarChar(120)
+  activo                  Boolean                   @default(true)
+  creado_en               DateTime                  @default(now()) @db.Timestamp(0)
+  actualizado_en          DateTime                  @default(now()) @db.Timestamp(0)
+  servicios               servicios[]
+  subcategoria_categorias subcategoria_categorias[]
+  categorias              categorias                @relation(fields: [categoria_id], references: [id], onDelete: Cascade, map: "fk_subcat_categoria")
+
+  @@unique([categoria_id, nombre], map: "uk_subcategorias_categoria_nombre")
+  @@index([categoria_id], map: "idx_subcategorias_categoria_id")
+}
+
+model admin_login_attempts {
+  id         BigInt   @id @default(autoincrement()) @db.UnsignedBigInt
+  ip         String   @db.VarChar(64)
+  correo     String?  @db.VarChar(255)
+  created_at DateTime @default(now())
+
+  @@index([correo, created_at], map: "idx_correo_created")
+  @@index([ip, created_at], map: "idx_ip_created")
+}
+
+model subcategoria_categorias {
+  subcategoria_id Int           @db.UnsignedInt
+  categoria_id    Int           @db.UnsignedInt
+  creado_en       DateTime      @default(now()) @db.Timestamp(0)
+  categorias      categorias    @relation(fields: [categoria_id], references: [id], onDelete: Cascade, map: "fk_sc_categoria")
+  subcategorias   subcategorias @relation(fields: [subcategoria_id], references: [id], onDelete: Cascade, map: "fk_sc_subcategoria")
+
+  @@id([subcategoria_id, categoria_id])
+  @@index([categoria_id], map: "idx_sc_categoria_id")
+}
+
+model unidades_medida {
+  id             Int          @id @default(autoincrement()) @db.UnsignedInt
+  nombre         String       @unique(map: "uq_unidades_medida_nombre") @db.VarChar(40)
+  abreviatura    String       @unique(map: "uq_unidades_medida_abreviatura") @db.VarChar(15)
+  activo         Boolean      @default(true)
+  creado_en      DateTime     @default(now()) @db.Timestamp(0)
+  actualizado_en DateTime     @default(now()) @db.Timestamp(0)
+  materiales     materiales[]
+}
+
+model configuracion_sitio {
+  id                   Int      @id @default(autoincrement()) @db.UnsignedInt
+  logo_url             String?  @db.VarChar(500)
+  logo_storage_key     String?  @db.VarChar(255)
+  color_primario       String   @default("#111827") @db.VarChar(20)
+  color_secundario     String   @default("#FFFFFF") @db.VarChar(20)
+  color_acento         String   @default("#EC4899") @db.VarChar(20)
+  dark_mode_habilitado Boolean  @default(false)
+  whatsapp             String?  @db.VarChar(30)
+  direccion            String?  @db.VarChar(150)
+  ciudad               String?  @db.VarChar(80)
+  departamento         String?  @db.VarChar(80)
+  horarios_json        Json?
+  creado_en            DateTime @default(now()) @db.Timestamp(0)
+  actualizado_en       DateTime @default(now()) @db.Timestamp(0)
+}
+
 enum materiales_tipo {
   FISICO
   TIEMPO
@@ -129,31 +211,6 @@ enum materiales_unidad {
   MINUTO
   ML
   G
-}
-
-model categorias {
-  id             Int      @id @default(autoincrement()) @db.UnsignedInt
-  nombre         String   @unique(map: "uk_categorias_nombre") @db.VarChar(80)
-  activo         Boolean  @default(true)
-  creado_en      DateTime @default(now()) @db.Timestamp(0)
-  actualizado_en DateTime @default(now()) @db.Timestamp(0)
-
-  subcategorias subcategorias[]
-}
-
-model subcategorias {
-  id             Int      @id @default(autoincrement()) @db.UnsignedInt
-  categoria_id   Int      @db.UnsignedInt
-  nombre         String   @db.VarChar(80)
-  activo         Boolean  @default(true)
-  creado_en      DateTime @default(now()) @db.Timestamp(0)
-  actualizado_en DateTime @default(now()) @db.Timestamp(0)
-
-  categorias categorias  @relation(fields: [categoria_id], references: [id], onDelete: Cascade, map: "fk_subcat_categoria")
-  servicios  servicios[]
-
-  @@unique([categoria_id, nombre], map: "uk_subcategorias_categoria_nombre")
-  @@index([categoria_id], map: "idx_subcategorias_categoria_id")
 }
 
 enum blog_publicaciones_estado {
