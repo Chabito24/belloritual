@@ -19,9 +19,33 @@ type ServicioMaterialItem = {
   materiales: Material;
 };
 
+type Servicio = {
+  id: number;
+  nombre: string;
+  subcategoria_id: number | null;
+  activo: boolean;
+};
+
+type Categoria = { 
+  id: number; 
+  nombre: string 
+};
+
+type Subcategoria = { 
+  id: number; 
+  categoria_id: number; 
+  nombre: string; 
+  activo: boolean 
+};
+
 export default function AdminServiciosPage() {
   const [sessionOk, setSessionOk] = useState<boolean | null>(null);
 
+  // (B3) Nuevo: servicios por subcategoría (por ahora subcategoriaId fijo en 3)
+  const [servicios, setServicios] = useState<Servicio[]>([]);
+  const [subcategoriaId, setSubcategoriaId] = useState<number>(3);
+
+  // Mantengo esto igual (aún manual por ID)
   const [servicioId, setServicioId] = useState<number>(1);
 
   const [materiales, setMateriales] = useState<Material[]>([]);
@@ -32,7 +56,11 @@ export default function AdminServiciosPage() {
   const [materialId, setMaterialId] = useState<number | "">("");
   const [cantidad, setCantidad] = useState<number>(1);
   const [nota, setNota] = useState<string>("");
+  const [categorias, setCategorias] = useState<Categoria[]>([]);
+  const [categoriaId, setCategoriaId] = useState<number>(5);
+  const [subcategorias, setSubcategorias] = useState<Subcategoria[]>([]);
 
+  // No lo usas ahora, pero lo dejo por si luego lo necesitas
   const materialesById = useMemo(() => {
     const m = new Map<number, Material>();
     for (const x of materiales) m.set(x.id, x);
@@ -53,6 +81,29 @@ export default function AdminServiciosPage() {
     setMateriales(j.items || []);
   }
 
+  async function loadCategorias() {
+    const r = await fetch("/api/admin/categorias", { credentials: "include" });
+    const j = await r.json();
+    if (!r.ok || !j?.ok) throw new Error(j?.error || "ERROR_CARGANDO_CATEGORIAS");
+    setCategorias((j.items || []).map((c: any) => ({ id: c.id, nombre: c.nombre })));
+  }
+
+  async function loadSubcategorias(catId: number) {
+    const r = await fetch(`/api/admin/subcategorias?categoria_id=${catId}`, { credentials: "include" });
+    const j = await r.json();
+    if (!r.ok || !j?.ok) throw new Error(j?.error || "ERROR_CARGANDO_SUBCATEGORIAS");
+    setSubcategorias(j.items || []);
+  }
+
+  async function loadServicios(subId: number) {
+    const r = await fetch(`/api/admin/servicios?subcategoria_id=${subId}`, {
+      credentials: "include",
+    });
+    const j = await r.json();
+    if (!r.ok || !j?.ok) throw new Error(j?.error || "ERROR_CARGANDO_SERVICIOS");
+    setServicios(j.items || []);
+  }
+
   async function loadServicioMateriales(id: number) {
     const r = await fetch(`/api/admin/servicios/materiales?servicio_id=${id}`, {
       credentials: "include",
@@ -62,11 +113,18 @@ export default function AdminServiciosPage() {
     setItems(j.items || []);
   }
 
-  async function refreshAll(id = servicioId) {
+  async function refreshAll(
+    id = servicioId, 
+    catId = categoriaId, 
+    subId = subcategoriaId) {
     setLoading(true);
     setMsg("");
     try {
-      await Promise.all([loadMateriales(), loadServicioMateriales(id)]);
+      await loadMateriales();
+      await loadCategorias();
+      await loadSubcategorias(catId);
+      await loadServicios(subId);
+      await loadServicioMateriales(id);
     } catch (e: any) {
       setMsg(e?.message ?? "ERROR_INTERNO");
     } finally {
@@ -79,7 +137,8 @@ export default function AdminServiciosPage() {
       const ok = await checkSession();
       setSessionOk(ok);
       if (!ok) return;
-      await refreshAll(servicioId);
+
+      await refreshAll(servicioId, categoriaId, subcategoriaId);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -89,7 +148,7 @@ export default function AdminServiciosPage() {
       setMsg("SERVICIO_ID_INVALIDO");
       return;
     }
-    await refreshAll(servicioId);
+    await refreshAll(servicioId, subcategoriaId);
   }
 
   async function onAsignar() {
@@ -118,7 +177,7 @@ export default function AdminServiciosPage() {
     setMaterialId("");
     setCantidad(1);
     setNota("");
-    await refreshAll(servicioId);
+    await refreshAll(servicioId, subcategoriaId);
   }
 
   async function onEliminar(mid: number) {
@@ -132,7 +191,7 @@ export default function AdminServiciosPage() {
       setMsg(text || `ERROR_HTTP_${r.status}`);
       return;
     }
-    await refreshAll(servicioId);
+    await refreshAll(servicioId, subcategoriaId);
   }
 
   if (sessionOk === false) {
@@ -157,25 +216,71 @@ export default function AdminServiciosPage() {
 
       <div style={{ display: "flex", gap: 10, alignItems: "center", flexWrap: "wrap" }}>
         <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
-          <span>Servicio ID</span>
-          <input
-            type="number"
+          <span>Categoría</span>
+          <select
+            value={categoriaId}
+            onChange={async (e) => {
+              const newCat = Number(e.target.value);
+              setCategoriaId(newCat);
+              await loadSubcategorias(newCat);
+            }}
+            style={{ padding: 8, minWidth: 220 }}
+          >
+            {categorias.map((c) => (
+              <option key={c.id} value={c.id}>
+                #{c.id} — {c.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span>Subcategoría</span>
+          <select
+            value={subcategoriaId}
+            onChange={async (e) => {
+              const newSub = Number(e.target.value);
+              setSubcategoriaId(newSub);
+              await loadServicios(newSub);
+            }}
+            style={{ padding: 8, minWidth: 240 }}
+          >
+            {subcategorias.map((s) => (
+              <option key={s.id} value={s.id}>
+                #{s.id} — {s.nombre}
+              </option>
+            ))}
+          </select>
+        </label>
+
+        <label style={{ display: "flex", gap: 8, alignItems: "center" }}>
+          <span>Servicio</span>
+          <select
             value={servicioId}
             onChange={(e) => setServicioId(Number(e.target.value))}
-            style={{ padding: 8, width: 120 }}
-            min={1}
-          />
+            style={{ padding: 8, minWidth: 280 }}
+          >
+            {servicios.length === 0 ? (
+              <option value={servicioId}>Sin servicios cargados</option>
+            ) : null}
+
+            {servicios.map((s) => (
+              <option key={s.id} value={s.id}>
+                #{s.id} — {s.nombre}
+              </option>
+            ))}
+          </select>
         </label>
+
         <button onClick={onBuscar} style={{ padding: "8px 12px" }} disabled={loading}>
-          Buscar
+          Ver materiales
         </button>
+
         {loading ? <span>Cargando…</span> : null}
       </div>
 
       {msg ? (
-        <p style={{ marginTop: 12, color: "crimson" }}>
-          {msg}
-        </p>
+        <p style={{ marginTop: 12, color: "crimson" }}>{msg}</p>
       ) : null}
 
       <h2 style={{ marginTop: 20, fontSize: 18, fontWeight: 700 }}>
@@ -261,7 +366,7 @@ export default function AdminServiciosPage() {
       </div>
 
       <p style={{ marginTop: 12, fontSize: 12, opacity: 0.8 }}>
-        Tip: este módulo no crea servicios todavía; trabaja por Servicio ID. Luego en B2 agregamos creación/listado.
+        Tip: selecciona Categoría → Subcategoría → Servicio y administra los materiales del servicio desde aquí.
       </p>
     </main>
   );

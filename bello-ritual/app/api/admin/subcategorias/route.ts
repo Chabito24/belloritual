@@ -35,12 +35,18 @@ async function requireAdmin(req: NextRequest) {
 export async function GET(req: NextRequest) {
   const admin = await requireAdmin(req);
   if (!admin) return NextResponse.json({ ok: false }, { status: 401 });
-
   const url = new URL(req.url);
-  const categoria_id = url.searchParams.get("categoria_id");
-  const where: any = {};
+  const categoria_id_raw = url.searchParams.get("categoria_id");
+  const categoria_id = Number(categoria_id_raw);
 
-  if (categoria_id) where.categoria_id = Number(categoria_id);
+    if (!categoria_id_raw || !Number.isFinite(categoria_id) || categoria_id <= 0) {
+    return NextResponse.json(
+    { ok: false, error: "CATEGORIA_ID_REQUERIDO" },
+    { status: 400 }
+  );
+}
+
+  const where = { categoria_id, activo: true };
 
   const items = await prisma.subcategorias.findMany({
     where,
