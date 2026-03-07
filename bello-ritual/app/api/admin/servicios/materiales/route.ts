@@ -9,37 +9,11 @@ function sha256(input: string) {
   return crypto.createHash("sha256").update(input).digest("hex");
 }
 
-// COPIA AQUÍ tu requireAdmin EXACTO desde app/api/admin/materiales/route.ts
-
-export async function GET(req: NextRequest) {
-  try {
-    const admin = await requireAdmin(req);
-    if (!admin) {
-      return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
-    }
-
-    const { searchParams } = new URL(req.url);
-    const servicio_id = Number(searchParams.get("servicio_id"));
-
-    if (!Number.isFinite(servicio_id) || servicio_id <= 0) {
-      return NextResponse.json({ ok: false, error: "SERVICIO_ID_REQUERIDO" }, { status: 400 });
-    }
-
-    const items = await prisma.servicio_materiales.findMany({
-      where: { servicio_id },
-      include: {
-        materiales: {
-          select: { id: true, nombre: true, tipo: true, unidad: true, costo_unitario: true },
-        },
-      },
-      orderBy: { material_id: "asc" },
-    });
-
-    return NextResponse.json({ ok: true, items }, { status: 200 });
-  } catch (e: any) {
-    return NextResponse.json({ ok: false, error: e?.message ?? "ERROR_INTERNO" }, { status: 500 });
-  }
+function toNumber(value: any, fallback = 0) {
+  const n = Number(value);
+  return Number.isFinite(n) ? n : fallback;
 }
+
 async function requireAdmin(req: NextRequest) {
   const token = req.cookies.get("admin_session")?.value;
   if (!token) return null;
@@ -63,6 +37,105 @@ async function requireAdmin(req: NextRequest) {
   return admin;
 }
 
+function normalizarItem(item: any) {
+  const cantidad = toNumber(item.cantidad, 0);
+  const costo_unitario = toNumber(item.materiales?.costo_unitario, 0);
+
+  return {
+    servicio_id: item.servicio_id,
+    material_id: item.material_id,
+    cantidad,
+    nota: item.nota,
+    subtotal: cantidad * costo_unitario,
+    material: item.materiales
+      ? {
+          id: item.materiales.id,
+          nombre: item.materiales.nombre,
+          tipo: item.materiales.tipo,
+          costo_unitario: item.materiales.costo_unitario,
+          activo: item.materiales.activo,
+          unidad_medida_id: item.materiales.unidad_medida_id,
+          unidad_legacy: item.materiales.unidad,
+          unidad_medida: item.materiales.unidades_medida
+            ? {
+                id: item.materiales.unidades_medida.id,
+                nombre: item.materiales.unidades_medida.nombre,
+                abreviatura: item.materiales.unidades_medida.abreviatura,
+                activo: item.materiales.unidades_medida.activo,
+              }
+            : null,
+        }
+      : null,
+  };
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const admin = await requireAdmin(req);
+    if (!admin) {
+      return NextResponse.json({ ok: false, error: "No autorizado" }, { status: 401 });
+    }
+
+    const { searchParams } = new URL(req.url);
+    const servicio_id = Number(searchParams.get("servicio_id"));
+
+    if (!Number.isFinite(servicio_id) || servicio_id <= 0) {
+      return NextResponse.json(
+        { ok: false, error: "SERVICIO_ID_REQUERIDO" },
+        { status: 400 }
+      );
+    }
+
+    const servicio = await prisma.servicios.findUnique({
+      where: { id: servicio_id },
+      select: { id: true, nombre: true },
+    });
+
+    if (!servicio) {
+      return NextResponse.json(
+        { ok: false, error: "SERVICIO_NO_EXISTE" },
+        { status: 404 }
+      );
+    }
+
+    const items = await prisma.servicio_materiales.findMany({
+      where: { servicio_id },
+      include: {
+        materiales: {
+          select: {
+            id: true,
+            nombre: true,
+            tipo: true,
+            unidad_medida_id: true,
+            unidad: true,
+            costo_unitario: true,
+            activo: true,
+            unidades_medida: {
+              select: {
+                id: true,
+                nombre: true,
+                abreviatura: true,
+                activo: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: [{ material_id: "asc" }],
+    });
+
+    return NextResponse.json(
+      { ok: true, items: items.map(normalizarItem) },
+      { status: 200 }
+    );
+  } catch (e: any) {
+    return NextResponse.json(
+      { ok: false, error: e?.message ?? "ERROR_INTERNO" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     const admin = await requireAdmin(req);
@@ -75,26 +148,86 @@ export async function POST(req: NextRequest) {
     const servicio_id = Number(body?.servicio_id);
     const material_id = Number(body?.material_id);
     const cantidad = Number(body?.cantidad);
-    const nota = body?.nota == null ? null : String(body.nota);
+    const nota = body?.nota == null ? null : String(body.nota).trim() || null;
 
     if (!Number.isFinite(servicio_id) || servicio_id <= 0) {
-      return NextResponse.json({ ok: false, error: "SERVICIO_ID_REQUERIDO" }, { status: 400 });
-    }
-    if (!Number.isFinite(material_id) || material_id <= 0) {
-      return NextResponse.json({ ok: false, error: "MATERIAL_ID_REQUERIDO" }, { status: 400 });
-    }
-    if (!Number.isFinite(cantidad) || cantidad <= 0) {
-      return NextResponse.json({ ok: false, error: "CANTIDAD_INVALIDA" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "SERVICIO_ID_REQUERIDO" },
+        { status: 400 }
+      );
     }
 
-    // Inserta o actualiza (PK compuesta: servicio_id + material_id)
-    await prisma.$executeRaw`
-      INSERT INTO servicio_materiales (servicio_id, material_id, cantidad, nota)
-      VALUES (${servicio_id}, ${material_id}, ${cantidad}, ${nota})
-      ON DUPLICATE KEY UPDATE
-        cantidad = VALUES(cantidad),
-        nota = VALUES(nota)
-    `;
+    if (!Number.isFinite(material_id) || material_id <= 0) {
+      return NextResponse.json(
+        { ok: false, error: "MATERIAL_ID_REQUERIDO" },
+        { status: 400 }
+      );
+    }
+
+    if (!Number.isFinite(cantidad) || cantidad <= 0) {
+      return NextResponse.json(
+        { ok: false, error: "CANTIDAD_INVALIDA" },
+        { status: 400 }
+      );
+    }
+
+    const [servicio, material] = await Promise.all([
+      prisma.servicios.findUnique({
+        where: { id: servicio_id },
+        select: { id: true, requiere_materiales: true },
+      }),
+      prisma.materiales.findUnique({
+        where: { id: material_id },
+        select: { id: true, activo: true },
+      }),
+    ]);
+
+    if (!servicio) {
+      return NextResponse.json(
+        { ok: false, error: "SERVICIO_NO_EXISTE" },
+        { status: 404 }
+      );
+    }
+
+    if (!material) {
+      return NextResponse.json(
+        { ok: false, error: "MATERIAL_NO_EXISTE" },
+        { status: 404 }
+      );
+    }
+
+    if (!material.activo) {
+      return NextResponse.json(
+        { ok: false, error: "MATERIAL_INACTIVO" },
+        { status: 409 }
+      );
+    }
+
+    await prisma.servicio_materiales.upsert({
+      where: {
+        servicio_id_material_id: {
+          servicio_id,
+          material_id,
+        },
+      },
+      update: {
+        cantidad,
+        nota,
+      },
+      create: {
+        servicio_id,
+        material_id,
+        cantidad,
+        nota,
+      },
+    });
+
+    if (!servicio.requiere_materiales) {
+      await prisma.servicios.update({
+        where: { id: servicio_id },
+        data: { requiere_materiales: true },
+      });
+    }
 
     return NextResponse.json({ ok: true }, { status: 201 });
   } catch (e: any) {
@@ -104,6 +237,7 @@ export async function POST(req: NextRequest) {
     );
   }
 }
+
 export async function DELETE(req: NextRequest) {
   try {
     const admin = await requireAdmin(req);
@@ -116,10 +250,31 @@ export async function DELETE(req: NextRequest) {
     const material_id = Number(searchParams.get("material_id"));
 
     if (!Number.isFinite(servicio_id) || servicio_id <= 0) {
-      return NextResponse.json({ ok: false, error: "SERVICIO_ID_REQUERIDO" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "SERVICIO_ID_REQUERIDO" },
+        { status: 400 }
+      );
     }
+
     if (!Number.isFinite(material_id) || material_id <= 0) {
-      return NextResponse.json({ ok: false, error: "MATERIAL_ID_REQUERIDO" }, { status: 400 });
+      return NextResponse.json(
+        { ok: false, error: "MATERIAL_ID_REQUERIDO" },
+        { status: 400 }
+      );
+    }
+
+    const actual = await prisma.servicio_materiales.findUnique({
+      where: {
+        servicio_id_material_id: { servicio_id, material_id },
+      },
+      select: { servicio_id: true, material_id: true },
+    });
+
+    if (!actual) {
+      return NextResponse.json(
+        { ok: false, error: "ASIGNACION_NO_EXISTE" },
+        { status: 404 }
+      );
     }
 
     await prisma.servicio_materiales.delete({
